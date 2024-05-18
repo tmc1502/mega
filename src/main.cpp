@@ -2,30 +2,38 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
+// Sensor pins
+#define TRIG_PIN_1 2
+#define ECHO_PIN_1 3
 
-#define TRIG_PIN_1 8
-#define ECHO_PIN_1 9
+#define TRIG_PIN_2 4
+#define ECHO_PIN_2 5
 
-#define TRIG_PIN_2 10
-#define ECHO_PIN_2 11
+#define TRIG_PIN_3 6
+#define ECHO_PIN_3 7
 
-#define TRIG_PIN_3 12
-#define ECHO_PIN_3 13
+#define TRIG_PIN_4 8
+#define ECHO_PIN_4 9
 
-#define TRIG_PIN_4 14
-#define ECHO_PIN_4 15
+// LED pins for each sensor (2 LEDs per sensor, using analog pins A0-A7)
+#define LED_RED_1 A0
+#define LED_GREEN_1 A1
 
-#define LED_PIN_1 2
-#define LED_PIN_2 3
-#define LED_PIN_3 4
-#define LED_PIN_4 5
+#define LED_RED_2 A2
+#define LED_GREEN_2 A3
+
+#define LED_RED_3 A4
+#define LED_GREEN_3 A5
+
+#define LED_RED_4 A6
+#define LED_GREEN_4 A7
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
   Serial.begin(9600);
-  
 
+  // Initialize sensor pins
   pinMode(TRIG_PIN_1, OUTPUT);
   pinMode(ECHO_PIN_1, INPUT);
   pinMode(TRIG_PIN_2, OUTPUT);
@@ -34,12 +42,18 @@ void setup() {
   pinMode(ECHO_PIN_3, INPUT);
   pinMode(TRIG_PIN_4, OUTPUT);
   pinMode(ECHO_PIN_4, INPUT);
-  
-  pinMode(LED_PIN_1, OUTPUT);
-  pinMode(LED_PIN_2, OUTPUT);
-  pinMode(LED_PIN_3, OUTPUT);
-  pinMode(LED_PIN_4, OUTPUT);
 
+  // Initialize LED pins
+  pinMode(LED_RED_1, OUTPUT);
+  pinMode(LED_GREEN_1, OUTPUT);
+  pinMode(LED_RED_2, OUTPUT);
+  pinMode(LED_GREEN_2, OUTPUT);
+  pinMode(LED_RED_3, OUTPUT);
+  pinMode(LED_GREEN_3, OUTPUT);
+  pinMode(LED_RED_4, OUTPUT);
+  pinMode(LED_GREEN_4, OUTPUT);
+
+  // Initialize LCD
   lcd.init();
   lcd.backlight();
 }
@@ -53,7 +67,7 @@ float getDistance(int trigPin, int echoPin) {
 
   long duration = pulseIn(echoPin, HIGH);
   float distance = duration * 0.034 / 2;
-  
+
   return distance;
 }
 
@@ -65,44 +79,53 @@ void loop() {
 
   int ledCount = 0;
 
+  // Sensor 1 logic
   if (distance1 < 30.0) {
-    digitalWrite(LED_PIN_1, LOW);  
+    digitalWrite(LED_RED_1, HIGH);  
+    digitalWrite(LED_GREEN_1, LOW);   
   } else {
-    digitalWrite(LED_PIN_1, HIGH); 
+    digitalWrite(LED_RED_1, LOW);   
+    digitalWrite(LED_GREEN_1, HIGH); 
     ledCount++;
   }
 
+  // Sensor 2 logic
   if (distance2 < 30.0) {
-    digitalWrite(LED_PIN_2, LOW);  
+    digitalWrite(LED_RED_2, HIGH);  
+    digitalWrite(LED_GREEN_2, LOW);   
   } else {
-    digitalWrite(LED_PIN_2, HIGH); 
+    digitalWrite(LED_RED_2, LOW);   
+    digitalWrite(LED_GREEN_2, HIGH);  
     ledCount++;
   }
 
+  // Sensor 3 logic
   if (distance3 < 30.0) {
-    digitalWrite(LED_PIN_3, LOW); 
+    digitalWrite(LED_RED_3, HIGH);  
+    digitalWrite(LED_GREEN_3, LOW);   
   } else {
-    digitalWrite(LED_PIN_3, HIGH);
+    digitalWrite(LED_RED_3, LOW);   
+    digitalWrite(LED_GREEN_3, HIGH); 
     ledCount++;
   }
 
+  // Sensor 4 logic
   if (distance4 < 30.0) {
-    digitalWrite(LED_PIN_4, LOW);  
+    digitalWrite(LED_RED_4, HIGH);  
+    digitalWrite(LED_GREEN_4, LOW);   
   } else {
-    digitalWrite(LED_PIN_4, HIGH); 
+    digitalWrite(LED_RED_4, LOW);   
+    digitalWrite(LED_GREEN_4, HIGH); 
     ledCount++;
   }
 
-
-
-  //LCD
+  // Update LCD display
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("SMART PARKING");
   lcd.setCursor(0, 1);
   lcd.print("Empty slots: ");
   lcd.print(ledCount);
-
 
   delay(500);
 }
