@@ -3,35 +3,37 @@
 #include <LiquidCrystal_I2C.h>
 
 // Sensor pins
-#define TRIG_PIN_1 2
-#define ECHO_PIN_1 3
+#define TRIG_PIN_1 12
+#define ECHO_PIN_1 13
 
-#define TRIG_PIN_2 4
-#define ECHO_PIN_2 5
+#define TRIG_PIN_2 14
+#define ECHO_PIN_2 15
 
-#define TRIG_PIN_3 6
-#define ECHO_PIN_3 7
+#define TRIG_PIN_3 16
+#define ECHO_PIN_3 17
 
-#define TRIG_PIN_4 8
-#define ECHO_PIN_4 9
+#define TRIG_PIN_4 18
+#define ECHO_PIN_4 19
 
-#define TRIG_PIN_5 10
-#define ECHO_PIN_5 11
+#define TRIG_PIN_5 22
+#define ECHO_PIN_5 23
 
-#define TRIG_PIN_6 12
-#define ECHO_PIN_6 13
+////
 
-#define TRIG_PIN_7 22
-#define ECHO_PIN_7 23
+#define TRIG_PIN_6 2
+#define ECHO_PIN_6 3
 
-#define TRIG_PIN_8 24
-#define ECHO_PIN_8 25
+#define TRIG_PIN_7 4
+#define ECHO_PIN_7 5
 
-#define TRIG_PIN_9 26
-#define ECHO_PIN_9 27
+#define TRIG_PIN_8 6
+#define ECHO_PIN_8 7
 
-#define TRIG_PIN_10 28
-#define ECHO_PIN_10 29
+#define TRIG_PIN_9 8
+#define ECHO_PIN_9 9
+
+#define TRIG_PIN_10 10
+#define ECHO_PIN_10 11
 
 // LED pins for each sensor
 #define LED_RED_1 A0
@@ -58,11 +60,11 @@
 #define LED_RED_8 A14
 #define LED_GREEN_8 A15
 
-#define LED_RED_9 30
-#define LED_GREEN_9 31
+#define LED_RED_9 24
+#define LED_GREEN_9 25
 
-#define LED_RED_10 32
-#define LED_GREEN_10 33
+#define LED_RED_10 26
+#define LED_GREEN_10 27
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
