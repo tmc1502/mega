@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include <ArduinoJson.h>
 
 // Sensor pins
 #define TRIG_PIN_1 12
@@ -37,7 +38,7 @@
 
 // LED pins for each sensor
 #define LED_RED_1 A0
-#define LED_GREEN_1 A1 
+#define LED_GREEN_1 A1
 
 #define LED_RED_2 A2
 #define LED_GREEN_2 A3
@@ -70,55 +71,27 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup()
 {
+  lcd.begin(16, 2);
   Serial.begin(115200);
 
   // Initialize sensor pins
-//A
-  pinMode(TRIG_PIN_1, OUTPUT);
-  pinMode(ECHO_PIN_1, INPUT);
-  pinMode(TRIG_PIN_2, OUTPUT);
-  pinMode(ECHO_PIN_2, INPUT);
-  pinMode(TRIG_PIN_3, OUTPUT);
-  pinMode(ECHO_PIN_3, INPUT);
-  pinMode(TRIG_PIN_4, OUTPUT);
-  pinMode(ECHO_PIN_4, INPUT);
-  pinMode(TRIG_PIN_5, OUTPUT);
-  pinMode(ECHO_PIN_5, INPUT);
-//B
-  pinMode(TRIG_PIN_6, OUTPUT);
-  pinMode(ECHO_PIN_6, INPUT);
-  pinMode(TRIG_PIN_7, OUTPUT);
-  pinMode(ECHO_PIN_7, INPUT);
-  pinMode(TRIG_PIN_8, OUTPUT);
-  pinMode(ECHO_PIN_8, INPUT);
-  pinMode(TRIG_PIN_9, OUTPUT);
-  pinMode(ECHO_PIN_9, INPUT);
-  pinMode(TRIG_PIN_10, OUTPUT);
-  pinMode(ECHO_PIN_10, INPUT);
+  for (int i = 2; i <= 29; i += 2)
+  {
+    pinMode(i, OUTPUT);
+    pinMode(i + 1, INPUT);
+  }
 
   // Initialize LED pins
-  //A
-  pinMode(LED_RED_1, OUTPUT);
-  pinMode(LED_GREEN_1, OUTPUT);
-  pinMode(LED_RED_2, OUTPUT);
-  pinMode(LED_GREEN_2, OUTPUT);
-  pinMode(LED_RED_3, OUTPUT);
-  pinMode(LED_GREEN_3, OUTPUT);
-  pinMode(LED_RED_4, OUTPUT);
-  pinMode(LED_GREEN_4, OUTPUT);
-  pinMode(LED_RED_5, OUTPUT);
-  pinMode(LED_GREEN_5, OUTPUT);
-  //B
-  pinMode(LED_RED_6, OUTPUT);
-  pinMode(LED_GREEN_6, OUTPUT);
-  pinMode(LED_RED_7, OUTPUT);
-  pinMode(LED_GREEN_7, OUTPUT);
-  pinMode(LED_RED_8, OUTPUT);
-  pinMode(LED_GREEN_8, OUTPUT);
-  pinMode(LED_RED_9, OUTPUT);
-  pinMode(LED_GREEN_9, OUTPUT);
-  pinMode(LED_RED_10, OUTPUT);
-  pinMode(LED_GREEN_10, OUTPUT);
+  for (int i = A0; i <= A15; i += 2)
+  {
+    pinMode(i, OUTPUT);
+    pinMode(i + 1, OUTPUT);
+  }
+  for (int i = 30; i <= 33; i += 2)
+  {
+    pinMode(i, OUTPUT);
+    pinMode(i + 1, OUTPUT);
+  }
 
   // Initialize LCD
   lcd.init();
@@ -141,181 +114,56 @@ float getDistance(int trigPin, int echoPin)
 
 void loop()
 {
-  float distance1 = getDistance(TRIG_PIN_1, ECHO_PIN_1);
-  float distance2 = getDistance(TRIG_PIN_2, ECHO_PIN_2);
-  float distance3 = getDistance(TRIG_PIN_3, ECHO_PIN_3);
-  float distance4 = getDistance(TRIG_PIN_4, ECHO_PIN_4);
-  float distance5 = getDistance(TRIG_PIN_5, ECHO_PIN_5); // New distance
-  float distance6 = getDistance(TRIG_PIN_6, ECHO_PIN_6); // New distance
-  float distance7 = getDistance(TRIG_PIN_7, ECHO_PIN_7); // New distance
-  float distance8 = getDistance(TRIG_PIN_8, ECHO_PIN_8); // New distance
-  float distance9 = getDistance(TRIG_PIN_9, ECHO_PIN_9); // New distance
-  float distance10 = getDistance(TRIG_PIN_10, ECHO_PIN_10); // New distance
+  float distances[10];
+  distances[0] = getDistance(TRIG_PIN_1, ECHO_PIN_1);
+  distances[1] = getDistance(TRIG_PIN_2, ECHO_PIN_2);
+  distances[2] = getDistance(TRIG_PIN_3, ECHO_PIN_3);
+  distances[3] = getDistance(TRIG_PIN_4, ECHO_PIN_4);
+  distances[4] = getDistance(TRIG_PIN_5, ECHO_PIN_5);
+  distances[5] = getDistance(TRIG_PIN_6, ECHO_PIN_6);
+  distances[6] = getDistance(TRIG_PIN_7, ECHO_PIN_7);
+  distances[7] = getDistance(TRIG_PIN_8, ECHO_PIN_8);
+  distances[8] = getDistance(TRIG_PIN_9, ECHO_PIN_9);
+  distances[9] = getDistance(TRIG_PIN_10, ECHO_PIN_10);
 
-  int ledCount = 0;
   int ledStatus[10];
+  int ledCount = 0;
 
-  // Sensor 1 logic
-  if (distance1 < 10.0)
+  for (int i = 0; i < 10; i++)
   {
-    digitalWrite(LED_RED_1, HIGH);
-    digitalWrite(LED_GREEN_1, LOW);
-    ledStatus[0] = 1;
-  }
-  else
-  {
-    digitalWrite(LED_RED_1, LOW);
-    digitalWrite(LED_GREEN_1, HIGH);
-    ledStatus[0] = 0;
-    ledCount++;
-  }
-
-  // Sensor 2 logic
-  if (distance2 < 10.0)
-  {
-    digitalWrite(LED_RED_2, HIGH);
-    digitalWrite(LED_GREEN_2, LOW);
-    ledStatus[1] = 1;
-  }
-  else
-  {
-    digitalWrite(LED_RED_2, LOW);
-    digitalWrite(LED_GREEN_2, HIGH);
-    ledStatus[1] = 0;
-    ledCount++;
-  }
-
-  // Sensor 3 logic
-  if (distance3 < 10.0)
-  {
-    digitalWrite(LED_RED_3, HIGH);
-    digitalWrite(LED_GREEN_3, LOW);
-    ledStatus[2] = 1;
-  }
-  else
-  {
-    digitalWrite(LED_RED_3, LOW);
-    digitalWrite(LED_GREEN_3, HIGH);
-    ledStatus[2] = 0;
-    ledCount++;
-  }
-
-  // Sensor 4 logic
-  if (distance4 < 10.0)
-  {
-    digitalWrite(LED_RED_4, HIGH);
-    digitalWrite(LED_GREEN_4, LOW);
-    ledStatus[3] = 1;
-  }
-  else
-  {
-    digitalWrite(LED_RED_4, LOW);
-    digitalWrite(LED_GREEN_4, HIGH);
-    ledStatus[3] = 0;
-    ledCount++;
-  }
-
-  // Sensor 5 logic
-  if (distance5 < 10.0)
-  {
-    digitalWrite(LED_RED_5, HIGH);
-    digitalWrite(LED_GREEN_5, LOW);
-    ledStatus[4] = 1;
-  }
-  else
-  {
-    digitalWrite(LED_RED_5, LOW);
-    digitalWrite(LED_GREEN_5, HIGH);
-    ledStatus[4] = 0;
-    ledCount++;
-  }
-
-  // Sensor 6 logic
-  if (distance6 < 10.0)
-  {
-    digitalWrite(LED_RED_6, HIGH);
-    digitalWrite(LED_GREEN_6, LOW);
-    ledStatus[5] = 1;
-  }
-  else
-  {
-    digitalWrite(LED_RED_6, LOW);
-    digitalWrite(LED_GREEN_6, HIGH);
-    ledStatus[5] = 0;
-    ledCount++;
-  }
-
-  // Sensor 7 logic
-  if (distance7 < 10.0)
-  {
-    digitalWrite(LED_RED_7, HIGH);
-    digitalWrite(LED_GREEN_7, LOW);
-    ledStatus[6] = 1;
-  }
-  else
-  {
-    digitalWrite(LED_RED_7, LOW);
-    digitalWrite(LED_GREEN_7, HIGH);
-    ledStatus[6] = 0;
-    ledCount++;
-  }
-
-  // Sensor 8 logic
-  if (distance8 < 10.0)
-  {
-    digitalWrite(LED_RED_8, HIGH);
-    digitalWrite(LED_GREEN_8, LOW);
-    ledStatus[7] = 1;
-  }
-  else
-  {
-    digitalWrite(LED_RED_8, LOW);
-    digitalWrite(LED_GREEN_8, HIGH);
-    ledStatus[7] = 0;
-    ledCount++;
-  }
-
-  // Sensor 9 logic
-  if (distance9 < 10.0)
-  {
-    digitalWrite(LED_RED_9, HIGH);
-    digitalWrite(LED_GREEN_9, LOW);
-    ledStatus[8] = 1;
-  }
-  else
-  {
-    digitalWrite(LED_RED_9, LOW);
-    digitalWrite(LED_GREEN_9, HIGH);
-    ledStatus[8] = 0;
-    ledCount++;
-  }
-
-  // Sensor 10 logic
-  if (distance10 < 10.0)
-  {
-    digitalWrite(LED_RED_10, HIGH);
-    digitalWrite(LED_GREEN_10, LOW);
-    ledStatus[9] = 1;
-  }
-  else
-  {
-    digitalWrite(LED_RED_10, LOW);
-    digitalWrite(LED_GREEN_10, HIGH);
-    ledStatus[9] = 0;
-    ledCount++;
+    if (distances[i] < 10.0)
+    {
+      digitalWrite(A0 + i * 2, HIGH); // Red LED
+      digitalWrite(A1 + i * 2, LOW);  // Green LED
+      ledStatus[i] = 1;
+    }
+    else
+    {
+      digitalWrite(A0 + i * 2, LOW);  // Red LED
+      digitalWrite(A1 + i * 2, HIGH); // Green LED
+      ledStatus[i] = 0;
+      ledCount++;
+    }
   }
 
   // Update LCD display
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("SMART PARKING");
+  lcd.print("BAI GUI XE");
   lcd.setCursor(0, 1);
-  lcd.print("Empty slots: ");
+  lcd.print("SO CHO CON: ");
   lcd.print(ledCount);
-String data = "A:" + String(ledStatus[0]) + "," + String(ledStatus[1]) + "," + String(ledStatus[2]) + "," + String(ledStatus[3]) + "," + String(ledStatus[4]) + " B:" + String(ledStatus[5]) + "," + String(ledStatus[6]) + "," + String(ledStatus[7]) + "," + String(ledStatus[8]) + "," + String(ledStatus[9]);
-Serial.println(data);
 
+  // Prepare JSON data
+  StaticJsonDocument<256> jsonDoc;
+  JsonArray ledArray = jsonDoc.createNestedArray("ledStatus");
+  for (int i = 0; i < 10; i++)
+  {
+    ledArray.add(ledStatus[i]);
+  }
+  String jsonData;
+  serializeJson(jsonDoc, jsonData);
+  Serial.println(jsonData);
 
-  delay(5000);
+  delay(1000);
 }
-
