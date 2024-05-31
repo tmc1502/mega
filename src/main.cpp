@@ -4,6 +4,7 @@
 #include <ArduinoJson.h>
 
 // Sensor pins
+// A
 #define TRIG_PIN_1 12
 #define ECHO_PIN_1 13
 
@@ -19,7 +20,7 @@
 #define TRIG_PIN_5 22
 #define ECHO_PIN_5 23
 
-////
+////B
 
 #define TRIG_PIN_6 2
 #define ECHO_PIN_6 3
