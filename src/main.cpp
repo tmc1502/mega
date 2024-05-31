@@ -21,7 +21,6 @@
 #define ECHO_PIN_5 23
 
 ////B
-
 #define TRIG_PIN_6 2
 #define ECHO_PIN_6 3
 
