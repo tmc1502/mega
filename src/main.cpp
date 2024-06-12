@@ -1,41 +1,38 @@
 #include <Arduino.h>
-
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <ArduinoJson.h>
 
 // Sensor pins
-// A
-#define TRIG_PIN_1 12
-#define ECHO_PIN_1 13
+#define TRIG_PIN_1 10
+#define ECHO_PIN_1 11
 
-#define TRIG_PIN_2 14
-#define ECHO_PIN_2 15
+#define TRIG_PIN_2 8
+#define ECHO_PIN_2 9
 
-#define TRIG_PIN_3 16
-#define ECHO_PIN_3 17
+#define TRIG_PIN_3 6
+#define ECHO_PIN_3 7
 
-#define TRIG_PIN_4 18
-#define ECHO_PIN_4 19
+#define TRIG_PIN_4 4
+#define ECHO_PIN_4 5
 
-#define TRIG_PIN_5 22
-#define ECHO_PIN_5 23
+#define TRIG_PIN_5 2
+#define ECHO_PIN_5 3
 
-////B
-#define TRIG_PIN_6 2
-#define ECHO_PIN_6 3
+#define TRIG_PIN_6 22
+#define ECHO_PIN_6 23
 
-#define TRIG_PIN_7 4
-#define ECHO_PIN_7 5
+#define TRIG_PIN_7 18
+#define ECHO_PIN_7 19
 
-#define TRIG_PIN_8 6
-#define ECHO_PIN_8 7
+#define TRIG_PIN_8 16
+#define ECHO_PIN_8 17
 
-#define TRIG_PIN_9 8
-#define ECHO_PIN_9 9
+#define TRIG_PIN_9 14
+#define ECHO_PIN_9 15
 
-#define TRIG_PIN_10 10
-#define ECHO_PIN_10 11
+#define TRIG_PIN_10 12
+#define ECHO_PIN_10 13
 
 // LED pins for each sensor
 #define LED_RED_1 A0
@@ -88,7 +85,7 @@ void setup()
     pinMode(i, OUTPUT);
     pinMode(i + 1, OUTPUT);
   }
-  for (int i = 30; i <= 33; i += 2)
+  for (int i = 24; i <= 27; i += 2)
   {
     pinMode(i, OUTPUT);
     pinMode(i + 1, OUTPUT);
@@ -157,14 +154,18 @@ void loop()
 
   // Prepare JSON data
   StaticJsonDocument<256> jsonDoc;
-  JsonArray ledArray = jsonDoc.createNestedArray("ledStatus");
+  JsonObject ledStatusObject = jsonDoc.createNestedObject("ledStatus");
+
   for (int i = 0; i < 10; i++)
   {
-    ledArray.add(ledStatus[i]);
+    String key = (i < 5) ? "A" + String(i + 1) : "B" + String(i - 4);
+    ledStatusObject[key] = ledStatus[i];
   }
+
   String jsonData;
   serializeJson(jsonDoc, jsonData);
-  Serial.println(jsonData);
+
+  Serial.println(jsonData); // Send JSON data over Serial to ESP8266
 
   delay(1000);
 }
